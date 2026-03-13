@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  fr-spoof-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fr-spoof-detector
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./models:/app/models:ro  # Mount models folder (read-only)
+    restart: unless-stopped
+    # Uncomment untuk GPU support (jika server GPU tersedia)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Optional: Nginx reverse proxy untuk production
+  nginx:
+    image: nginx:alpine
+    container_name: fr-spoof-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro  # Tempat certbot menyimpan SSL certs
+    depends_on:
+      - fr-spoof-api
+    restart: unless-stopped
+    # Uncomment jika ingin enable
+    # enabled: false
