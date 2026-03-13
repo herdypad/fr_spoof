@@ -4,9 +4,9 @@ werkzeug
 cerberus
 flask-jwt-extended
 cryptography
-pymysql
+# pymysql
 pytz
-pymysqlpool
+# pymysqlpool
 face_recognition
 Pillow
 numpy
